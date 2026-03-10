@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>LIVE Bill Easy</title>
+
+<style>
+
+body{
+    font-family:Tahoma;
+    background:#f4f6f9;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.container{
+    text-align:center;
+}
+
+h1{
+    margin-bottom:40px;
+}
+
+.menu{
+    display:flex;
+    gap:40px;
+    justify-content:center;
+}
+
+.card{
+    width:220px;
+    padding:30px;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 6px 15px rgba(0,0,0,0.15);
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+.title{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.desc{
+    margin-top:10px;
+    color:#666;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>LIVE Bill Easy</h1>
+
+<div class="menu">
+
+<div class="card" onclick="location.href='/form'">
+<div class="title">บิลผ้าม่าน</div>
+<div class="desc">ระบบคำนวณผ้าม่าน</div>
+</div>
+
+<div class="card" onclick="location.href='/equipment'">
+<div class="title">บิลอุปกรณ์</div>
+<div class="desc">ราวม่าน / หัวราว / ขา</div>
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

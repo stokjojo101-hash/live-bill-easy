@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bill</title>
+
+<style>
+body{
+    font-family:Tahoma;
+    margin:20px;
+}
+
+.wrapper{
+    width:1300px;
+    margin:auto;
+}
+
+h2{
+    margin:0;
+    font-size:28px;   /* 👈 ปรับตรงนี้ */
+    font-weight:bold;
+}
+
+.subtext{
+    font-size:22px; /* 👈 ปรับตรงนี้ */
+    font-weight:bold;
+    margin-top:5px;
+}
+
+table{
+    border-collapse:collapse;
+    width:100%;
+    margin-top:20px;
+    table-layout:fixed;
+}
+
+th,td{
+    border:1px solid #000;
+    padding:4px 6px;      /* ลดระยะห่าง */
+    text-align:center;
+    vertical-align:top;
+}
+
+th{
+    background:#eee;
+}
+
+/* ที่อยู่ */
+.col-address{
+    text-align:left;
+    white-space:pre-line;
+    width:280px;
+    line-height:1.9;
+}
+
+/* ลดช่องไฟรายการ */
+.item-line{
+    line-height:1.7;
+    margin:2px 0;
+}
+
+/* ของแถมเว้นระยะนิด */
+.gift-line{
+    line-height:1.6;
+    margin:4px 0;
+}
+
+/* ราคาชำระ */
+.pay-line{
+    line-height:1.5;
+    margin:4px 0;
+}
+
+/* รวมต้นทุน */
+.total{
+    margin-top:20px;
+    text-align:right;
+    font-weight:bold;
+    font-size:18px;
+}
+
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+
+    button {
+        display: none;
+    }
+}
+
+.print-mode button {
+    display: none;
+}
+
+td{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    word-wrap:break-word;
+}
+
+.gift-line{
+    white-space:normal;
+}
+
+.pay-col{
+    font-size:16px;      /* 👈 เพิ่มขนาดตรงนี้ */
+    /*font-weight:bold; <=ถ้าอยากได้ตัวหนาใส่อันนี้*/ 
+}
+
+.bottom-section{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-top:30px;
+}
+
+.left-slip{
+    width:50%;
+}
+
+.right-summary{
+    width:45%;
+    text-align:right;
+}
+
+.slip-img{
+    max-width:350px;
+    border:1px solid #000;
+}
+
+.subtext-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:5px;
+}
+
+.left-text{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.right-text{
+    font-size:15px;
+    font-weight:bold;
+    margin-right:400px;  /* 🔥 ถอยจากขอบ */
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+<h2>{{header}}</h2>
+<div class="subtext-row">
+    <div class="left-text">
+        Tiktok Shop รบกวนจัดส่งภายใน 1 วัน
+    </div>
+
+    {% if extra_message %}
+    <div class="right-text">
+        {{ extra_message }}
+    </div>
+    {% endif %}
+</div>
+
+<div style="margin-top:15px; text-align:right;">
+    <button onclick="printBill()">🖨 ปริ้น / Save PDF</button>
+    <button type="button" onclick="exportExcelImage()">📊 Export Excel</button>
+</div>
+
+<script>
+function printBill() {
+    document.title = "ใบสรุปบิล_" + new Date().getTime();
+    window.print();
+}
+</script>
+
+<table>
+<thead>
+<tr>
+    <th style="width:90px;">วันที่</th>
+    <th style="width:280px;">ที่อยู่</th>
+    <th style="width:100px;">สี</th>
+    {% if bill_type == "equipment" %}
+    <th style="width:120px;">รายการ</th>
+    {% else %}
+    <th style="width:120px;">ขนาด</th>
+    {% endif %}
+    <th style="width:50px;">จำนวน</th>
+
+    {% if bill_type != "equipment" %}
+    <th style="width:160px;">ของแถม</th>
+    {% endif %}
+
+    <th style="width:120px;">หมายเหตุ</th>
+    <th style="width:100px;">ต้นทุน</th>
+    <th style="width:130px;">ราคาชำระ</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+
+<td>{{ date }}</td>
+
+<td class="col-address">{{ address|safe }}</td>
+
+<td>
+{% for i in items %}
+<div class="item-line">{{ i.color }}</div>
+{% endfor %}
+</td>
+
+<td>
+{% for i in items %}
+<div class="item-line">{{ i.size }}</div>
+{% endfor %}
+</td>
+
+<td>
+{% for i in items %}
+<div class="item-line">{{ i.qty }}</div>
+{% endfor %}
+</td>
+
+{% if bill_type != "equipment" %}
+<td>
+{% for g in gifts %}
+<div class="gift-line">{{ g.name }} = {{ g.qty }}</div>
+{% endfor %}
+</td>
+{% endif %}
+
+<td>
+{% for i in items %}
+<div class="item-line" style="white-space:pre-line;">{{ i.note }}</div>
+{% endfor %}
+</td>
+
+<td>
+{% for i in items %}
+<div class="item-line">{{ "{:,.2f}".format(i.cost) }}</div>
+{% endfor %}
+</td>
+
+<td class="pay-col">
+
+{% if payments|length == 1 %}
+
+{{ payments[0].type }} {{ "{:,.0f}".format(payments[0].amount) }}
+
+{% else %}
+
+{% for p in payments %}
+<div class="pay-line">{{ p.type }} {{ "{:,.0f}".format(p.amount) }}</div>
+{% endfor %}
+
+{% endif %}
+
+</td>
+
+</tr>
+</tbody>
+</table>
+
+<div class="bottom-section">
+
+    <!-- ฝั่งซ้าย (ว่างไว้ใส่สลิป) -->
+    <div class="left-slip">
+        {% if slip_filename %}
+        <h3>สลิปการโอน</h3>
+        <img src="{{ url_for('static', filename='uploads/' + slip_filename) }}"
+             class="slip-img">
+        {% endif %}
+    </div>
+
+    <!-- ฝั่งขวา (สรุปรวมต้นทุน) -->
+    <div class="right-summary">
+        <div class="total">
+
+        {% if bill_type != "equipment" %}
+                        ต้นทุนผ้าม่าน {{ total_fabric_qty }} ผืน , {{ "{:,.2f}".format(fabric_total_cost) }} บาท
+
+        <br>
+
+                      ต้นทุนของแถม {{ total_gift_qty }} ชิ้น , {{ "{:,.2f}".format(gift_total_cost) }} บาท
+
+        
+        <hr>
+
+        {% endif %}
+
+                       รวมต้นทุน {{ "{:,.2f}".format(total_cost) }} บาท
+
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+function exportExcelImage() {
+
+    const wrapper = document.querySelector(".wrapper");
+
+    // 🔥 ใส่โหมด print
+    wrapper.classList.add("print-mode");
+
+    html2canvas(wrapper, { scale: 2 }).then(canvas => {
+
+        const imageData = canvas.toDataURL("image/png");
+
+        fetch("/export_excel_image", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                image: imageData
+            })
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "bill.xlsx";
+            a.click();
+        })
+        .finally(() => {
+            // 🔥 เอาโหมด print ออก
+            wrapper.classList.remove("print-mode");
+        });
+
+    });
+}
+</script>
+
+
+</body>
+</html>

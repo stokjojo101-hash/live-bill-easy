@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>บิลอุปกรณ์</title>
+
+<style>
+body{
+font-family:Tahoma;
+background:#f4f6f9;
+padding:30px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+width:700px;
+margin:auto;
+}
+
+.row{
+margin-bottom:10px;
+}
+
+input,select{
+padding:6px;
+margin-right:5px;
+}
+
+button{
+padding:10px 20px;
+background:#2b7cff;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1f5ed1;
+}
+
+.item{
+margin-bottom:8px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="card">
+
+<h2>สร้างบิลอุปกรณ์</h2>
+
+<form method="POST" action="/equipment_bill" enctype="multipart/form-data">
+
+<h3>หัวบิล</h3>
+<input type="text" name="header" style="width:400px;"
+value="Sale ลส010 ใบเตย ออเดอร์บิลอุปกรณ์">
+
+<br><br>
+
+<h3>ที่อยู่</h3>
+<textarea name="address" rows="9" style="width:300px;"></textarea>
+
+<br><br>
+
+<h3>รายการราวม่าน</h3>
+
+<div id="rod_list">
+
+<div class="row">
+
+ความยาวราว
+<input name="rod_meter[]" type="number" step="0.1" style="width:70px;"> เมตร
+
+จำนวน
+<input type="number" name="rod_qty[]" style="width:60px;">
+
+สี
+<select name="rod_color[]">
+<option value="สักเข้ม">สักเข้ม</option>
+<option value="ดำ">ดำ</option>
+<option value="โอ๊คดำ">โอ๊คดำ</option>
+<option value="โอ๊คแดง">โอ๊คแดง</option>
+<option value="ขาว">ขาว</option>
+</select>
+
+</div>
+
+</div>
+
+<button type="button" onclick="addRod()">+ เพิ่มรายการราวม่าน</button>
+
+<br><br>
+
+<hr>
+<div class="row">
+
+หัวราว&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="number" name="rod_head_qty" style="width:60px;">
+
+สี
+<select name="rod_head_color">
+<option value="สักเข้ม">สักเข้ม</option>
+<option value="ดำ">ดำ</option>
+<option value="โอ๊คดำ">โอ๊คดำ</option>
+<option value="โอ๊คแดง">โอ๊คแดง</option>
+<option value="ขาว">ขาว</option>
+</select>
+
+</div>
+
+<div class="row">
+
+ขา 1 ชั้น&nbsp;&nbsp;
+<input type="number" name="bracket1_qty" style="width:60px;">
+
+สี
+<select name="bracket1_color">
+<option value="สักเข้ม">สักเข้ม</option>
+<option value="ดำ">ดำ</option>
+<option value="โอ๊คดำ">โอ๊คดำ</option>
+<option value="โอ๊คแดง">โอ๊คแดง</option>
+<option value="ขาว">ขาว</option>
+</select>
+
+</div>
+
+<div class="row">
+ขา 2 ชั้น&nbsp;&nbsp;
+<input type="number" name="bracket2_qty" style="width:60px;">
+
+สี
+<select name="bracket2_color">
+<option value="สักเข้ม">สักเข้ม</option>
+<option value="ดำ">ดำ</option>
+<option value="โอ๊คดำ">โอ๊คดำ</option>
+<option value="โอ๊คแดง">โอ๊คแดง</option>
+<option value="ขาว">ขาว</option>
+</select>
+
+</div>
+
+<div class="row">
+ข้อต่อ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="number" name="joint_qty" style="width:60px;">
+
+สี
+<select name="joint_color">
+<option value="-">-</option>
+</select>
+
+
+</div>
+
+<hr>
+
+<div class="row">
+สายรวบพู่&nbsp;
+<input type="number" name="tie_qty"style="width:60px;">
+
+สี
+<select name="tie_color">
+<option value="เทา">เทา</option>
+<option value="ทอง">ทอง</option>
+<option value="น้ำเงิน">น้ำเงิน</option>
+<option value="เหลือง">เหลือง</option>
+<option value="ฟ้า">ฟ้า</option>
+<option value="เขียว">เขียว</option>
+<option value="น้ำตาล">น้ำตาล</option>
+</select>
+
+</div>
+
+<br>
+
+<div style="margin-top:20px;">
+    <label>ราคาชำระ</label>
+
+    <div id="payment-container">
+
+        <div class="payment-row" style="margin-bottom:5px;">
+            <select name="payment_type[]">
+                <option value="โอน">โอน</option>
+                <option value="Tiktok">Tiktok</option>
+                <option value="COD">COD</option>
+                <option value="ยอดรวม">ยอดรวม</option>
+                <option value="มัดจำ">มัดจำ</option>
+            </select>
+
+            <input type="number" name="payment_amount[]" placeholder="จำนวนเงิน" style="width:120px;">
+        </div>
+
+    </div>
+
+    <button type="button" onclick="addPayment()">+ เพิ่มราคาชำระ</button>
+</div>
+
+<div style="margin-top:20px;">
+    <label>แนบสลิป</label><br>
+    <input type="file" name="slip">
+</div>
+
+<br>
+<button type="submit">สร้างบิล</button>
+
+</form>
+
+<script>
+
+function addRod(){
+
+let html = `
+<div class="row">
+ความยาวราว
+<input name="rod_meter[]" type="number" step="0.1" style="width:70px;"> เมตร
+
+จำนวน
+<input type="number" name="rod_qty[]" style="width:60px;">
+
+สี
+<select name="rod_color[]">
+<option>สักเข้ม</option>
+<option>ดำ</option>
+<option>โอ๊คดำ</option>
+<option>โอ๊คแดง</option>
+<option>ขาว</option>
+</select>
+
+</div>
+`;
+
+document.getElementById("rod_list").insertAdjacentHTML("beforeend",html);
+
+}
+
+</script>
+
+<script>
+function addPayment() {
+
+    const container = document.getElementById("payment-container");
+
+    const div = document.createElement("div");
+    div.className = "payment-row";
+    div.style.marginBottom = "5px";
+
+    div.innerHTML = `
+        <select name="payment_type[]">
+                <option value="โอน">โอน</option>
+                <option value="Tiktok">Tiktok</option>
+                <option value="COD">COD</option>
+                <option value="ยอดรวม">ยอดรวม</option>
+                <option value="มัดจำ">มัดจำ</option>
+        </select>
+
+        <input type="number" name="payment_amount[]" placeholder="จำนวนเงิน" style="width:120px;">
+    `;
+
+    container.appendChild(div);
+}
+</script>
+
+</body>
+</html>

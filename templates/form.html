@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>LIVE Bill Easy</title>
+
+<style>
+body{
+    font-family:Tahoma;
+    background:#f4f6f9;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.08);
+}
+
+.card-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:15px;
+    border-bottom:1px solid #eee;
+    padding-bottom:8px;
+}
+
+input, textarea{
+    padding:6px;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+input:focus, textarea:focus{
+    outline:none;
+    border-color:#4CAF50;
+}
+
+button{
+    padding:8px 14px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.btn-primary{
+    background:#4CAF50;
+    color:white;
+}
+
+.btn-primary:hover{
+    background:#43a047;
+}
+
+.btn-add{
+    background:#2196F3;
+    color:white;
+}
+
+.btn-add:hover{
+    background:#1e88e5;
+}
+</style>
+
+
+<script>
+
+function addFabric(){
+    let container = document.getElementById("fabric-container");
+    container.insertAdjacentHTML("beforeend", `
+        <div class="row">
+            สี <input name="color[]" required>
+            กว้าง <input name="width[]" style="width:60px" required>
+            สูง <input name="height[]" style="width:60px" required>
+            จำนวน <input name="qty[]" style="width:60px" required>
+            หมายเหตุ <textarea name="note[]" rows="1" style="width:160px; vertical-align:top;"></textarea>
+        </div>
+    `);
+}
+
+function addGift(){
+    let container = document.getElementById("gift-container");
+    container.insertAdjacentHTML("beforeend", `
+        <div class="row">
+            <input name="gift[]" placeholder="ของแถม">
+        </div>
+    `);
+}
+
+function addPayment(){
+    let container = document.getElementById("payment-container");
+    container.insertAdjacentHTML("beforeend", `
+        <div class="row">
+            <input type="text" name="pay_type[]" placeholder="เช่น Tiktok / โอน" required>
+            <input type="number" step="0.01" name="pay_amount[]" placeholder="จำนวนเงิน" required>
+        </div>
+    `);
+}
+
+</script>
+
+</head>
+<body>
+
+<div class="container">
+<h2 style="text-align:center;">LIVE Bill Easy</h2>
+
+<form method="POST" action="/generate" enctype="multipart/form-data">
+
+<div class="card">
+<div class="card-title">ข้อมูลบิล</div>
+
+หัวบิล:
+<input name="header"
+       value="Sale ลส010 ใบเตย ออเดอร์ผ้าม่าน"
+       required
+       style="width:400px; font-size:18px;">
+
+<br><br>
+
+ข้อความด้านขวา:
+<input type="text" name="extra_message" style="width:300px;">
+
+<br><br>
+
+วันที่:
+<input type="date" name="date">
+
+</div>
+
+<div class="card">
+<div class="card-title">ข้อมูลลูกค้า</div>
+
+<textarea name="address" rows="9" style="width:300px;" required></textarea>
+
+</div>
+
+<div class="card">
+<div class="card-title">รายการผ้า</div>
+
+<div id="fabric-container">
+    <div class="row">
+        สี <input name="color[]" required>
+        กว้าง <input name="width[]" style="width:60px" required>
+        สูง <input name="height[]" style="width:60px" required>
+        จำนวน <input name="qty[]" style="width:60px" required>
+        หมายเหตุ 
+    <textarea name="note[]" rows="1" style="width:160px; vertical-align:top;"></textarea>
+    </div>
+</div>
+
+<br>
+<button type="button" class="btn-add" onclick="addFabric()">+ เพิ่มผ้า</button>
+
+</div>
+
+
+<div class="card">
+<div class="card-title">ของแถม</div>
+
+<div class="row">
+    ชื่อ <input name="gift_name_1" style="width:150px">
+    จำนวน <input type="number" name="gift_qty_1" style="width:60px">
+    ราคาต่อหน่วย <input type="number" step="0.01"
+                name="gift_price_1"
+                id="gift_price_1">
+</div>
+
+<div class="row">
+    ชื่อ <input name="gift_name_2" style="width:150px">
+    จำนวน <input type="number" name="gift_qty_2" style="width:60px">
+    ราคาต่อหน่วย <input type="number" step="0.01"
+                name="gift_price_2"
+                id="gift_price_2">
+</div>
+
+<div class="row">
+    ชื่อ <input name="gift_name_3" style="width:150px">
+    จำนวน <input type="number" name="gift_qty_3" style="width:60px">
+    ราคาต่อหน่วย <input type="number" step="0.01"
+                name="gift_price_3"
+                id="gift_price_3">
+</div>
+
+</div>
+
+<div class="card">
+<div class="card-title">การชำระเงิน</div>
+
+<div id="payment-container">
+    <div class="row">
+        <input type="text" name="pay_type[]" placeholder="เช่น Tiktok / โอน" required>
+        <input type="number" step="0.01" name="pay_amount[]" placeholder="จำนวนเงิน" required>
+    </div>
+</div>
+
+<br>
+<button type="button" class="btn-add" onclick="addPayment()">+ เพิ่มช่องชำระเงิน</button>
+
+</div>
+
+<hr>
+<div class="card">
+<div class="card-title">แนบสลิปการโอน</div>
+
+<input type="file" name="slip_image" accept="image/*">
+
+<br><br>
+
+<div style="text-align:right;">
+<button type="submit" class="btn-primary" style="font-size:16px;">
+สร้างบิล
+</button>
+</div>
+
+</div>
+
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    for(let i=1;i<=3;i++){
+        let input = document.getElementById("gift_price_"+i);
+
+        // โหลดค่าที่เคยบันทึก
+        let saved = localStorage.getItem("gift_price_"+i);
+        if(saved){
+            input.value = saved;
+        }
+
+        // บันทึกเมื่อเปลี่ยนค่า
+        input.addEventListener("input", function(){
+            localStorage.setItem("gift_price_"+i, input.value);
+        });
+    }
+
+});
+</script>
+
+</body>
+</html>
